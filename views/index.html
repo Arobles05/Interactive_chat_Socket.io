@@ -5,23 +5,103 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Titulo</title>
+    <style> 
+    #contenedorMensaje {
+     background-color: aquamarine;
+     width: 75%;
+     height: 30%;
+     border-radius: 5px;
+     padding: 5px;
+    }
+    p{
+        border-radius: 10px;
+        background-color: #fff;
+        color: black;
+        width: 95%;
+        font-family: cursive;
+    }
+    strong {
+        margin: 12px;
+    }
+
+    #contenedorBtn{
+        background-color:cadetblue;
+     width: 75%;
+     height: 30%;
+     border-radius: 5px;
+     padding: 5px;
+    }
+    textarea {
+        resize: none;
+        width: 80%;
+        height: 35%;
+    }
+    #btnEnviar{
+        width: 10%;
+        height: 35px;
+    }
+    </style>
 </head>
 <body>
+    <h1>
+        Pagina de chat con socket.IO
+    </h1>
+    <form accept-charset="UTF-8">
+        <input type="text" name="correo" id="correo" placeholder="correo" value="" />
+        <input type="text" name="usuario"  id="usuario" placeholder="usuario" value=""/>
+        <input type="button" id=btnIngresar value="ingresar" onclick="logIn()" />
+    </form>
+
+<hr/>
+
+<div id="contenedorMensaje">
+
+</div>
+
+<div id="contenedorBtn">
+    <textarea id="textAreaMsj"></textarea>
+    <input type="button" id="btnEnviar" onclick="enviarMsj()" value="enviar" />
+</div>
     <script src="js/jquery-3.5.0.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script>
         const socket = io.connect();
-        socket.emit('datos_usuario_enviados',{correo:'correo@gmail.com',usuario:'theBreaker'});
-
-
+      
+        // 1 Escuchando mensaje del servidor
         socket.on('nuevo_usuario',function(datos){
-            alert("nuevo usuario conectado: "+datos.user);
+            alert("Se ha conectado: "+datos.user);
         });
+
+        //Atachando los mensajes del servidor
+
+        // 2 Escucnando mensajes desde el servidor
+        socket.on('ChattingMsj',function(datos){
+            //console.log(datos);
+           $("#contenedorMensaje").append("<p><strong>"+datos.usuario+": </strong>"+datos.mensaje+"</p>") ;
+        });
+
+        /// Fin bloque escucha
+
+
+
+        function logIn(){
+            var correo = $("#correo").val();
+            var usuario = $("#usuario").val();
+           //enviando loguin para el servidor
+            socket.emit('datos_usuario_enviados',{correo:correo,usuario:usuario});
+
+        }
+
+        function  enviarMsj(){
+            var msj = $("#textAreaMsj").val();
+            var usuario = $("#usuario").val();
+            //enviando mensaje del chat al servidor
+            socket.emit('mensaje_Enviado',{mensaje:msj,usuario:usuario});
+             $("#textAreaMsj").val() = string.empty;
+        }
 
     </script>
 
-    <h1>
-        pagina de chat
-    </h1>
+    
 </body>
 </html>

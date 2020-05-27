@@ -21,4 +21,12 @@ io.on('connect',function(socket){
         io.emit('nuevo_usuario',{user:datos.usuario});
     });
    // 
+
+   //escuchando el emit enviado desde el front-end llamado **
+   socket.on('mensaje_Enviado', function(datos){
+    console.log('Mensaje recibido del usuario '+ datos.usuario+' con el mensaje>>>>'+datos.mensaje );
+    io.emit('ChattingMsj',{usuario:datos.usuario,mensaje:datos.mensaje});
+});
+
+   
 });
